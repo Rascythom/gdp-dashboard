@@ -74,9 +74,9 @@ highlight_style = 'color: green; font-weight: bold;'
 # Zobrazení statistik s barevným zvýrazněním nejlepší kategorie
 for category, success in uspesnosti.items():
     if category == best_category:
-        st.markdown(f'<p style="{highlight_style}">{category}: {success:.2f}%</p>', unsafe_allow_html=True)
+        st.markdown(f'<p style="background-color: #FFFF00; padding: 5px; font-size: 16px; {highlight_style}">{category}: {success:.2f}%</p>', unsafe_allow_html=True)
     else:
-        st.markdown(f"{category}: {success:.2f}%")
+        st.markdown(f'<p style="background-color: #FFFFFF; padding: 5px; font-size: 16px;">{category}: {success:.2f}%</p>', unsafe_allow_html=True)
 
 # Zobrazení všech tiketů
 if st.session_state.tikety:
@@ -87,12 +87,12 @@ if st.session_state.tikety:
         st.session_state.tikety.pop(index)
     
     for i, tiket in enumerate(st.session_state.tikety):
-        # Barva pozadí podle výsledku (zisk/ztráta)
+        # Barva pozadí textu podle výsledku (zisk/ztráta)
         ticket_color = "#DFF2BF" if tiket["vysledek"] == "Vyhrál" else "#FFB6B6"
         
-        # Formátování tiketu
-        st.markdown(f'<div style="background-color: {ticket_color}; padding: 10px; margin-bottom: 10px; border-radius: 5px;">', unsafe_allow_html=True)
-        st.write(f"Tiket {i+1}: {tiket['castka']} Kč, Kurz: {tiket['kurz']}, Výsledek: {tiket['vysledek']}")
+        # Formátování tiketu s barvou pozadí textu
+        st.markdown(f'<div style="background-color: {ticket_color}; padding: 10px; margin-bottom: 10px; border-radius: 5px; display: inline-block;">', unsafe_allow_html=True)
+        st.markdown(f'<p style="background-color: {ticket_color}; padding: 5px; color: black; font-size: 16px;">Tiket {i+1}: {tiket["castka"]} Kč, Kurz: {tiket["kurz"]}, Výsledek: {tiket["vysledek"]}</p>', unsafe_allow_html=True)
         
         # Tlačítko pro smazání tiketu
         if st.button(f"Smazat {i+1}", key=f"smazat_{i}"):
