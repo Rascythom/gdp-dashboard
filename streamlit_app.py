@@ -61,10 +61,10 @@ uspesnost_nizke, uspesnost_stredni, uspesnost_vysoke = analyza_uspesnosti_kurzu(
 # Výstup statistik
 st.header("Celkový výsledek")
 st.markdown(
-    f'<div style="padding: 10px; background-color: {"#4CAF50" if celkovy_zisk_procenta >= 0 else "#FF5252"}; border-radius: 5px; color: white;">Celkový zisk: {celkovy_zisk_procenta:.2f}%</div>',
+    f'<div style="padding: 10px; background-color: {"#4CAF50" if celkovy_zisk_procenta >= 0 else "#F44336"}; border-radius: 5px; color: white;">Celkový zisk: {celkovy_zisk_procenta:.2f}%</div>',
     unsafe_allow_html=True)
 st.markdown(
-    f'<div style="padding: 10px; background-color: {"#4CAF50" if celkovy_zisk_penez >= 0 else "#FF5252"}; border-radius: 5px; color: white;">Celkový zisk v penězích: {celkovy_zisk_penez:.2f} Kč</div>',
+    f'<div style="padding: 10px; background-color: {"#4CAF50" if celkovy_zisk_penez >= 0 else "#F44336"}; border-radius: 5px; color: white;">Celkový zisk v penězích: {celkovy_zisk_penez:.2f} Kč</div>',
     unsafe_allow_html=True)
 
 st.markdown(f"Průměrný kurz: {prumerny_kurz:.2f}")
@@ -92,4 +92,3 @@ if st.session_state.tikety:
         if st.button(f"Smazat {i + 1}", key=f"smazat_{i}"):
             smazat_tiket(i)
             st.session_state.tikety = st.session_state.tikety
-        
