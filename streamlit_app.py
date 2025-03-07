@@ -38,12 +38,10 @@ if st.session_state.tikety:
 
 # Výpočet úspěšnosti podle typu kurzu
 def analyza_uspesnosti_kurzu(df):
-    # Definujeme kategorie kurzů
     nizke_kurzy = df[df["kurz"] <= 2.0]
     stredni_kurzy = df[(df["kurz"] > 2.0) & (df["kurz"] <= 3.0)]
     vysoke_kurzy = df[df["kurz"] > 3.0]
     
-    # Spočítáme úspěšnost pro každý typ kurzu
     uspesnost_nizke = (nizke_kurzy["výhra"].sum() / nizke_kurzy["castka"].sum() * 100) if nizke_kurzy["castka"].sum() > 0 else 0
     uspesnost_stredni = (stredni_kurzy["výhra"].sum() / stredni_kurzy["castka"].sum() * 100) if stredni_kurzy["castka"].sum() > 0 else 0
     uspesnost_vysoke = (vysoke_kurzy["výhra"].sum() / vysoke_kurzy["castka"].sum() * 100) if vysoke_kurzy["castka"].sum() > 0 else 0
@@ -60,11 +58,25 @@ st.markdown(f'<div style="padding: 10px; background-color: {"#4CAF50" if celkovy
 st.markdown(f"Průměrný kurz: {prumerny_kurz:.2f}")
 st.markdown(f"Průměrný úspěšný kurz: {prumerny_uspesny_kurz:.2f}")
 
-# Zobrazení úspěšnosti podle kurzu
+# Zobrazení úspěšnosti podle typu kurzu
 st.subheader("Úspěšnost podle typu kurzu")
-st.markdown(f"Úspěšnost při nízkých kurzech (do 2.0): {uspesnost_nizke:.2f}%")
-st.markdown(f"Úspěšnost při středních kurzech (2.0–3.0): {uspesnost_stredni:.2f}%")
-st.markdown(f"Úspěšnost při vysokých kurzech (nad 3.0): {uspesnost_vysoke:.2f}%")
+
+# Vytvoření zvýraznění nejlepší úspěšnosti
+uspesnosti = {
+    "Nízke kurzy (do 2.0)": uspesnost_nizke,
+    "Střední kurzy (2.0–3.0)": uspesnost_stredni,
+    "Vysoké kurzy (nad 3.0)": uspesnost_vysoke
+}
+
+best_category = max(uspesnosti, key=uspesnosti.get)
+highlight_style = 'color: green; font-weight: bold;'
+
+# Zobrazení statistik s barevným zvýrazněním nejlepší kategorie
+for category, success in uspesnosti.items():
+    if category == best_category:
+        st.markdown(f'<p style="{highlight_style}">{category}: {success:.2f}%</p>', unsafe_allow_html=True)
+    else:
+        st.markdown(f"{category}: {success:.2f}%")
 
 # Zobrazení všech tiketů
 if st.session_state.tikety:
@@ -74,9 +86,16 @@ if st.session_state.tikety:
         # Smazání tiketu ze seznamu
         st.session_state.tikety.pop(index)
     
-    # Smazání tiketu bez použití st.experimental_rerun()
     for i, tiket in enumerate(st.session_state.tikety):
+        # Barva podle výsledku (zisk/ztráta)
+        ticket_color = "#4CAF50" if tiket["vysledek"] == "Vyhrál" else "#FF5252"
+        
+        # Formátování tiketu
+        st.markdown(f'<div style="background-color: {ticket_color}; padding: 10px; margin-bottom: 10px; border-radius: 5px; color: white;">', unsafe_allow_html=True)
         st.write(f"Tiket {i+1}: {tiket['castka']} Kč, Kurz: {tiket['kurz']}, Výsledek: {tiket['vysledek']}")
+        
+        # Tlačítko pro smazání tiketu
         if st.button(f"Smazat {i+1}", key=f"smazat_{i}"):
             smazat_tiket(i)
-            st.session_state.tikety = st.session_state.tikety
+            st.session_state.tikety = st.session_state.tikety  # Tímto zajistíme vykreslení změny bez rerun
+        st.markdown('</div>', unsafe_allow_html=True)
