@@ -36,35 +36,28 @@ if st.session_state.tikety:
     uspesne_kurzy = df[df["výhra"] > 0]["kurz"]
     prumerny_uspesny_kurz = uspesne_kurzy.mean() if not uspesne_kurzy.empty else 0
 
-
 # Výpočet úspěšnosti podle typu kurzu
 def analyza_uspesnosti_kurzu(df):
-    # Definujeme kategorie kurzů
     nizke_kurzy = df[df["kurz"] <= 2.0]
     stredni_kurzy = df[(df["kurz"] > 2.0) & (df["kurz"] <= 3.0)]
     vysoke_kurzy = df[df["kurz"] > 3.0]
 
-    # Spočítáme úspěšnost pro každý typ kurzu
-    uspesnost_nizke = (nizke_kurzy["výhra"].sum() / nizke_kurzy["castka"].sum() * 100) if nizke_kurzy[
-                                                                                              "castka"].sum() > 0 else 0
-    uspesnost_stredni = (stredni_kurzy["výhra"].sum() / stredni_kurzy["castka"].sum() * 100) if stredni_kurzy[
-                                                                                                    "castka"].sum() > 0 else 0
-    uspesnost_vysoke = (vysoke_kurzy["výhra"].sum() / vysoke_kurzy["castka"].sum() * 100) if vysoke_kurzy[
-                                                                                                 "castka"].sum() > 0 else 0
+    uspesnost_nizke = (nizke_kurzy["výhra"].sum() / nizke_kurzy["castka"].sum() * 100) if nizke_kurzy["castka"].sum() > 0 else 0
+    uspesnost_stredni = (stredni_kurzy["výhra"].sum() / stredni_kurzy["castka"].sum() * 100) if stredni_kurzy["castka"].sum() > 0 else 0
+    uspesnost_vysoke = (vysoke_kurzy["výhra"].sum() / vysoke_kurzy["castka"].sum() * 100) if vysoke_kurzy["castka"].sum() > 0 else 0
 
     return uspesnost_nizke, uspesnost_stredni, uspesnost_vysoke
 
 
-uspesnost_nizke, uspesnost_stredni, uspesnost_vysoke = analyza_uspesnosti_kurzu(df) if st.session_state.tikety else (
-0, 0, 0)
+uspesnost_nizke, uspesnost_stredni, uspesnost_vysoke = analyza_uspesnosti_kurzu(df) if st.session_state.tikety else (0, 0, 0)
 
 # Výstup statistik
 st.header("Celkový výsledek")
 st.markdown(
-    f'<div style="padding: 10px; background-color: {"#4CAF50" if celkovy_zisk_procenta >= 0 else "#F44336"}; border-radius: 5px; color: white;">Celkový zisk: {celkovy_zisk_procenta:.2f}%</div>',
+    f'<div style="padding: 10px; background-color: {"#4CAF50" if celkovy_zisk_procenta >= 0 else "#FF5252"}; border-radius: 5px; color: white;">Celkový zisk: {celkovy_zisk_procenta:.2f}%</div>',
     unsafe_allow_html=True)
 st.markdown(
-    f'<div style="padding: 10px; background-color: {"#4CAF50" if celkovy_zisk_penez >= 0 else "#F44336"}; border-radius: 5px; color: white;">Celkový zisk v penězích: {celkovy_zisk_penez:.2f} Kč</div>',
+    f'<div style="padding: 10px; background-color: {"#4CAF50" if celkovy_zisk_penez >= 0 else "#FF5252"}; border-radius: 5px; color: white;">Celkový zisk v penězích: {celkovy_zisk_penez:.2f} Kč</div>',
     unsafe_allow_html=True)
 
 st.markdown(f"Průměrný kurz: {prumerny_kurz:.2f}")
@@ -79,16 +72,19 @@ st.markdown(f"Úspěšnost při vysokých kurzech (nad 3.0): {uspesnost_vysoke:.
 # Zobrazení všech tiketů
 if st.session_state.tikety:
     st.header("Historie tiketů")
-
-
+    
     def smazat_tiket(index):
-        # Smazání tiketu ze seznamu
         st.session_state.tikety.pop(index)
-
-
+    
     # Smazání tiketu bez použití st.experimental_rerun()
     for i, tiket in enumerate(st.session_state.tikety):
-        st.write(f"Tiket {i + 1}: {tiket['castka']} Kč, Kurz: {tiket['kurz']}, Výsledek: {tiket['vysledek']}")
+        if tiket['vysledek'] == "Vyhrál":
+            st.markdown(f'<div style="padding: 10px; background-color: #4CAF50; border-radius: 5px; color: white;">Tiket {i + 1}: {tiket["castka"]} Kč, Kurz: {tiket["kurz"]}, Výsledek: {tiket["vysledek"]}</div>',
+                        unsafe_allow_html=True)
+        else:
+            st.markdown(f'<div style="padding: 10px; background-color: #FF5252; border-radius: 5px; color: white;">Tiket {i + 1}: {tiket["castka"]} Kč, Kurz: {tiket["kurz"]}, Výsledek: {tiket["vysledek"]}</div>',
+                        unsafe_allow_html=True)
+
         if st.button(f"Smazat {i + 1}", key=f"smazat_{i}"):
             smazat_tiket(i)
             st.session_state.tikety = st.session_state.tikety
