@@ -73,9 +73,10 @@ if st.session_state.tikety:
     def smazat_tiket(index):
         del st.session_state.tikety[index]
         st.success("Tiket byl smazán")
-        st.experimental_rerun()
     
     for i, tiket in enumerate(st.session_state.tikety):
         st.write(f"Tiket {i+1}: {tiket['castka']} Kč, Kurz: {tiket['kurz']}, Výsledek: {tiket['vysledek']}")
         if st.button(f"Smazat {i+1}", key=f"smazat_{i}"):
             smazat_tiket(i)
+            # Obnovíme stránku, aniž bychom použili rerun
+            st.experimental_rerun()
