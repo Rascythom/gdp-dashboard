@@ -87,11 +87,11 @@ if st.session_state.tikety:
         st.session_state.tikety.pop(index)
     
     for i, tiket in enumerate(st.session_state.tikety):
-        # Barva podle výsledku (zisk/ztráta)
-        ticket_color = "#4CAF50" if tiket["vysledek"] == "Vyhrál" else "#FF5252"
+        # Barva pozadí podle výsledku (zisk/ztráta)
+        ticket_color = "#DFF2BF" if tiket["vysledek"] == "Vyhrál" else "#FFB6B6"
         
         # Formátování tiketu
-        st.markdown(f'<div style="background-color: {ticket_color}; padding: 10px; margin-bottom: 10px; border-radius: 5px; color: white;">', unsafe_allow_html=True)
+        st.markdown(f'<div style="background-color: {ticket_color}; padding: 10px; margin-bottom: 10px; border-radius: 5px;">', unsafe_allow_html=True)
         st.write(f"Tiket {i+1}: {tiket['castka']} Kč, Kurz: {tiket['kurz']}, Výsledek: {tiket['vysledek']}")
         
         # Tlačítko pro smazání tiketu
