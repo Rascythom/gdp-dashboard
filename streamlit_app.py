@@ -74,8 +74,9 @@ if st.session_state.tikety:
         # Smazání tiketu ze seznamu
         st.session_state.tikety.pop(index)
     
+    # Smazání tiketu bez použití st.experimental_rerun()
     for i, tiket in enumerate(st.session_state.tikety):
         st.write(f"Tiket {i+1}: {tiket['castka']} Kč, Kurz: {tiket['kurz']}, Výsledek: {tiket['vysledek']}")
         if st.button(f"Smazat {i+1}", key=f"smazat_{i}"):
             smazat_tiket(i)
-            st.experimental_rerun()
+            st.session_state.tikety = st.session_state.tikety
