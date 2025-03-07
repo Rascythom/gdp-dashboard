@@ -1,49 +1,45 @@
 import streamlit as st
 import pandas as pd
 
-# Inicializace session state
-if 'tickets' not in st.session_state:
-    st.session_state.tickets = []
-
-def add_ticket(amount, odds, won):
-    st.session_state.tickets.append({'amount': amount, 'odds': odds, 'won': won})
-
-def calculate_statistics():
-    df = pd.DataFrame(st.session_state.tickets)
-    if df.empty:
-        return 0, 0, 0, 0
-    
-    df['payout'] = df.apply(lambda x: x['amount'] * x['odds'] if x['won'] else 0, axis=1)
-    df['profit'] = df['payout'] - df['amount']
-    total_profit = df['profit'].sum()
-    total_amount = df['amount'].sum()
-    profit_percentage = (total_profit / total_amount) * 100 if total_amount != 0 else 0
-    avg_odds = df['odds'].mean()
-    successful_bets = df[df['won']]
-    avg_successful_odds = successful_bets['odds'].mean() if not successful_bets.empty else 0
-    
-    return total_profit, profit_percentage, avg_odds, avg_successful_odds
+# Inicializace session state pro ukládání tiketů
+if "tikety" not in st.session_state:
+    st.session_state.tikety = []
 
 st.title("Sázková statistika")
 
-amount = st.number_input("Částka na tiket", min_value=1, step=1)
-odds = st.number_input("Kurz", min_value=1.0, step=0.01)
-won = st.radio("Výsledek", ["Vyhrál", "Prohrál"])
+# Vstupní formulář
+st.header("Přidat tiket")
+castka = st.number_input("Vložená částka", min_value=0.0, step=0.1)
+kurz = st.number_input("Kurz", min_value=1.0, step=0.01)
+vysledek = st.radio("Výsledek", ["Vyhrál", "Prohrál"], horizontal=True)
 
 if st.button("Přidat tiket"):
-    add_ticket(amount, odds, won == "Vyhrál")
-    st.success(f"Tiket přidán: {amount} Kč, Kurz: {odds}, Výsledek: {won}", icon="✅")
+    st.session_state.tikety.append({"castka": castka, "kurz": kurz, "vysledek": vysledek})
+    st.success(f"Tiket přidán: {castka} Kč, Kurz: {kurz}, Výsledek: {vysledek}")
 
-# Výpočty statistik
-total_profit, profit_percentage, avg_odds, avg_successful_odds = calculate_statistics()
-
-# Určení barvy podle výsledku
-profit_color = "#90EE90" if total_profit >= 0 else "#FF7F7F"  # Zelená pro zisk, červená pro ztrátu
-
-# Výpis celkových statistik
-st.markdown(f'''<div style="background-color: {profit_color}; padding: 10px; border-radius: 5px; text-align: center;">
-    <b>Celkový zisk: {profit_percentage:.2f}%</b><br>
-    <b>Celkový zisk v penězích: {total_profit:.2f} Kč</b><br>
-    <b>Průměrný kurz: {avg_odds:.2f}</b><br>
-    <b>Průměrný úspěšný kurz: {avg_successful_odds:.2f}</b>
-</div>''', unsafe_allow_html=True)
+# Zobrazení všech tiketů
+if st.session_state.tikety:
+    st.header("Historie tiketů")
+    df = pd.DataFrame(st.session_state.tikety)
+    df["výhra"] = df.apply(lambda row: row["castka"] * row["kurz"] if row["vysledek"] == "Vyhrál" else 0, axis=1)
+    st.dataframe(df, use_container_width=True)
+    
+    # Výpočty statistik
+    celkovy_zisk = df["výhra"].sum() - df["castka"].sum()
+    celkovy_zisk_penez = celkovy_zisk
+    prumerny_kurz = df["kurz"].mean()
+    uspesne_kurzy = df[df["výhra"] > 0]["kurz"]
+    prumerny_uspesny_kurz = uspesne_kurzy.mean() if not uspesne_kurzy.empty else 0
+    
+    # Barvy podle zisku
+    barva_zisk = "#4CAF50" if celkovy_zisk >= 0 else "#FF5252"
+    barva_zisk_penez = "#4CAF50" if celkovy_zisk_penez >= 0 else "#FF5252"
+    barva_prumerny_kurz = "#4CAF50" if prumerny_kurz >= 2 else "#FF5252"
+    barva_uspesny_kurz = "#4CAF50" if prumerny_uspesny_kurz >= 2 else "#FF5252"
+    
+    # Výstup statistik
+    st.header("Celkový výsledek")
+    st.markdown(f'<div style="padding: 10px; background-color: {barva_zisk}; border-radius: 5px; color: white;">Celkový zisk: {celkovy_zisk:.2f}%</div>', unsafe_allow_html=True)
+    st.markdown(f'<div style="padding: 10px; background-color: {barva_zisk_penez}; border-radius: 5px; color: white;">Celkový zisk v penězích: {celkovy_zisk_penez:.2f} Kč</div>', unsafe_allow_html=True)
+    st.markdown(f'<div style="padding: 10px; background-color: {barva_prumerny_kurz}; border-radius: 5px; color: white;">Průměrný kurz: {prumerny_kurz:.2f}</div>', unsafe_allow_html=True)
+    st.markdown(f'<div style="padding: 10px; background-color: {barva_uspesny_kurz}; border-radius: 5px; color: white;">Průměrný úspěšný kurz: {prumerny_uspesny_kurz:.2f}</div>', unsafe_allow_html=True)
