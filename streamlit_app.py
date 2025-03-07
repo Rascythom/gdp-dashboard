@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import matplotlib.pyplot as plt
 
 # Inicializace session state pro ukládání tiketů
 if "tikety" not in st.session_state:
@@ -9,9 +10,9 @@ st.title("Sázková statistika")
 
 # Vstupní formulář
 st.header("Přidat tiket")
-castka = st.number_input("Vložená částka", min_value=0.0, step=0.1, key="castka_input")
-kurz = st.number_input("Kurz", min_value=1.0, step=0.01, key="kurz_input")
-vysledek = st.radio("Výsledek", ["Vyhrál", "Prohrál"], horizontal=True, key="vysledek_input")
+castka = st.number_input("Vložená částka", min_value=0.0, step=0.1)
+kurz = st.number_input("Kurz", min_value=1.0, step=0.01)
+vysledek = st.radio("Výsledek", ["Vyhrál", "Prohrál"], horizontal=True)
 
 if st.button("Přidat tiket"):
     st.session_state.tikety.append({"castka": castka, "kurz": kurz, "vysledek": vysledek})
@@ -36,22 +37,6 @@ if st.session_state.tikety:
     uspesne_kurzy = df[df["výhra"] > 0]["kurz"]
     prumerny_uspesny_kurz = uspesne_kurzy.mean() if not uspesne_kurzy.empty else 0
 
-# Výpočet úspěšnosti podle typu kurzu
-def analyza_uspesnosti_kurzu(df):
-    # Definujeme kategorie kurzů
-    nizke_kurzy = df[df["kurz"] <= 2.0]
-    stredni_kurzy = df[(df["kurz"] > 2.0) & (df["kurz"] <= 3.0)]
-    vysoke_kurzy = df[df["kurz"] > 3.0]
-    
-    # Spočítáme úspěšnost pro každý typ kurzu
-    uspesnost_nizke = (nizke_kurzy["výhra"].sum() / nizke_kurzy["castka"].sum() * 100) if nizke_kurzy["castka"].sum() > 0 else 0
-    uspesnost_stredni = (stredni_kurzy["výhra"].sum() / stredni_kurzy["castka"].sum() * 100) if stredni_kurzy["castka"].sum() > 0 else 0
-    uspesnost_vysoke = (vysoke_kurzy["výhra"].sum() / vysoke_kurzy["castka"].sum() * 100) if vysoke_kurzy["castka"].sum() > 0 else 0
-    
-    return uspesnost_nizke, uspesnost_stredni, uspesnost_vysoke
-
-uspesnost_nizke, uspesnost_stredni, uspesnost_vysoke = analyza_uspesnosti_kurzu(df) if st.session_state.tikety else (0, 0, 0)
-
 # Výstup statistik
 st.header("Celkový výsledek")
 st.markdown(f'<div style="padding: 10px; background-color: {"#4CAF50" if celkovy_zisk_procenta >= 0 else "#FF5252"}; border-radius: 5px; color: white;">Celkový zisk: {celkovy_zisk_procenta:.2f}%</div>', unsafe_allow_html=True)
@@ -60,21 +45,39 @@ st.markdown(f'<div style="padding: 10px; background-color: {"#4CAF50" if celkovy
 st.markdown(f"Průměrný kurz: {prumerny_kurz:.2f}")
 st.markdown(f"Průměrný úspěšný kurz: {prumerny_uspesny_kurz:.2f}")
 
-# Zobrazení úspěšnosti podle kurzu
-st.subheader("Úspěšnost podle typu kurzu")
-st.markdown(f"Úspěšnost při nízkých kurzech (do 2.0): {uspesnost_nizke:.2f}%")
-st.markdown(f"Úspěšnost při středních kurzech (2.0–3.0): {uspesnost_stredni:.2f}%")
-st.markdown(f"Úspěšnost při vysokých kurzech (nad 3.0): {uspesnost_vysoke:.2f}%")
+# Vytvoření grafu
+if st.session_state.tikety:
+    # Vytvoření seznamu zisků a proher pro graf
+    zisky_a_ztraty = []
+    for i, tiket in enumerate(st.session_state.tikety):
+        zisk = tiket["castka"] * tiket["kurz"] if tiket["vysledek"] == "Vyhrál" else -tiket["castka"]
+        zisky_a_ztraty.append(zisk)
+
+    # Graf
+    fig, ax = plt.subplots()
+    ax.plot(range(1, len(zisky_a_ztraty) + 1), zisky_a_ztraty, color='green' if zisky_a_ztraty[-1] >= 0 else 'red', marker='o')
+    
+    # Nastavení grafu
+    ax.set_title("Růst/Zisk vs Pokles/Ztráta")
+    ax.set_xlabel("Počet tiketů")
+    ax.set_ylabel("Zisk/Ztráta (Kč)")
+    ax.set_facecolor('#1e1e1e')  # tmavé pozadí
+    ax.grid(True, linestyle='--', alpha=0.5)
+    
+    # Zobrazení grafu
+    st.pyplot(fig)
 
 # Zobrazení všech tiketů
 if st.session_state.tikety:
     st.header("Historie tiketů")
     
+    # Funkce pro smazání tiketů
     def smazat_tiket(index):
         del st.session_state.tikety[index]
+        # Namísto st.experimental_rerun() použijeme st.session_state.refresh()
+        st.session_state.tikety = st.session_state.tikety  # force refresh the state
         st.success("Tiket byl smazán")
-        st.experimental_rerun()
-    
+
     for i, tiket in enumerate(st.session_state.tikety):
         st.write(f"Tiket {i+1}: {tiket['castka']} Kč, Kurz: {tiket['kurz']}, Výsledek: {tiket['vysledek']}")
         if st.button(f"Smazat {i+1}", key=f"smazat_{i}"):
