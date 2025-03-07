@@ -71,13 +71,11 @@ if st.session_state.tikety:
 if st.session_state.tikety:
     st.header("Historie tiketů")
     
-    # Funkce pro smazání tiketů
     def smazat_tiket(index):
         del st.session_state.tikety[index]
-        # Namísto st.experimental_rerun() použijeme st.session_state.refresh()
-        st.session_state.tikety = st.session_state.tikety  # force refresh the state
         st.success("Tiket byl smazán")
-
+        st.experimental_rerun()
+    
     for i, tiket in enumerate(st.session_state.tikety):
         st.write(f"Tiket {i+1}: {tiket['castka']} Kč, Kurz: {tiket['kurz']}, Výsledek: {tiket['vysledek']}")
         if st.button(f"Smazat {i+1}", key=f"smazat_{i}"):
