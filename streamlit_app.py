@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import json
 import os
+import matplotlib.pyplot as plt
 
 # Cesta k souboru
 DATA_FILE = "tikety.json"
@@ -86,15 +87,26 @@ st.markdown(f"Úspěšnost při nízkých kurzech (do 2.0): {uspesnost_nizke:.2f
 st.markdown(f"Úspěšnost při středních kurzech (2.0–3.0): {uspesnost_stredni:.2f}%")
 st.markdown(f"Úspěšnost při vysokých kurzech (nad 3.0): {uspesnost_vysoke:.2f}%")
 
+# Vykreslení grafu
+if st.session_state.tikety:
+    st.subheader("Graf úspěšnosti podle typu kurzu")
+    labels = ["Nízké kurzy (do 2.0)", "Střední kurzy (2.0–3.0)", "Vysoké kurzy (nad 3.0)"]
+    success_rates = [uspesnost_nizke, uspesnost_stredni, uspesnost_vysoke]
+
+    fig, ax = plt.subplots()
+    ax.bar(labels, success_rates, color=["#4CAF50", "#FFEB3B", "#FF5722"])
+    ax.set_xlabel("Typ kurzu")
+    ax.set_ylabel("Úspěšnost (%)")
+    ax.set_title("Úspěšnost tiketů podle typu kurzu")
+    st.pyplot(fig)
+
 # Zobrazení všech tiketů
 if st.session_state.tikety:
     st.header("Historie tiketů")
 
-
     def smazat_tiket(index):
         del st.session_state.tikety[index]
         save_tikety(st.session_state.tikety)
-
 
     # Smazání tiketu bez použití st.experimental_rerun()
     for i, tiket in enumerate(st.session_state.tikety):
