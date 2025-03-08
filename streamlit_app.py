@@ -87,32 +87,6 @@ st.markdown(f"Úspěšnost při nízkých kurzech (do 2.0): {uspesnost_nizke:.2f
 st.markdown(f"Úspěšnost při středních kurzech (2.0–3.0): {uspesnost_stredni:.2f}%")
 st.markdown(f"Úspěšnost při vysokých kurzech (nad 3.0): {uspesnost_vysoke:.2f}%")
 
-# Vykreslení grafu
-if st.session_state.tikety:
-    fig, ax = plt.subplots(figsize=(10, 6))
-
-    # Data pro graf (Zisk/Ztráta)
-    ax.plot(df['kurz'], df['výhra'] - df['castka'], label='Zisk / Ztráta', color='tomato', marker='o', markersize=8, linestyle='-', linewidth=2)
-
-    # Vylepšené zobrazení os a mřížky
-    ax.axhline(0, color='black', linewidth=1)  # Čára na nulu
-    ax.set_xlabel('Kurz', fontsize=14)
-    ax.set_ylabel('Zisk / Ztráta (Kč)', fontsize=14)
-    ax.set_title('Výsledek vs. Kurz', fontsize=16, fontweight='bold')
-
-    # Přidání mřížky
-    ax.grid(True, which='both', axis='both', linestyle='--', linewidth=0.5, alpha=0.7)
-
-    # Doporučený kurz pro sázky (ideální zisk)
-    doporuceny_kurz = prumerny_uspesny_kurz  # Třeba průměrný úspěšný kurz
-    ax.axvline(doporuceny_kurz, color='dodgerblue', linestyle='--', label=f'Doporučený kurz ({doporuceny_kurz:.2f})', linewidth=2)
-
-    # Přidání legendy
-    ax.legend(loc='upper left', fontsize=12)
-
-    # Zobrazení grafu
-    st.pyplot(fig)
-
 # Zobrazení všech tiketů
 if st.session_state.tikety:
     st.header("Historie tiketů")
