@@ -3,6 +3,16 @@ import pandas as pd
 import json
 import os
 
+st.markdown("""
+    <style>
+        body {
+            background: linear-gradient(180deg, hsl(241, 100%, 10%) 0%, hsl(75, 93%, 74%) 100%);
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+    </style>
+""", unsafe_allow_html=True)
+
 # Cesta k souboru
 DATA_FILE = "tikety.json"
 
