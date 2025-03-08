@@ -2,7 +2,6 @@ import streamlit as st
 import pandas as pd
 import json
 import os
-import matplotlib.pyplot as plt
 
 # Cesta k souboru
 DATA_FILE = "tikety.json"
