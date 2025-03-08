@@ -13,7 +13,6 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# Cesta k souboru
 DATA_FILE = "tikety.json"
 
 # Funkce pro načtení tiketů ze souboru
