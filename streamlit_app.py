@@ -14,7 +14,7 @@ st.markdown("""
         h1 {
             font-family: 'Montserrat', sans-serif;
             font-weight: 700;
-            font-size: 7rem;  /* Zvýšená velikost */
+            font-size: 9rem;  /* Zvýšená velikost pro název */
             background: linear-gradient(90deg, rgba(241, 53, 80, 1) 0%, rgba(34, 193, 195, 1) 100%);
             -webkit-background-clip: text;
             color: transparent;
@@ -33,17 +33,16 @@ st.markdown("""
             margin-bottom: 20px;
         }
         .stButton button {
-            background-color: transparent;  /* Bez barvy */
+            background-color: #4CAF50;  /* Původní zelená barva */
             color: white;
             border-radius: 5px;
             padding: 10px 20px;
             font-size: 1.2rem;
             transition: background-color 0.3s;
-            border: 2px solid white;
+            border: none;
         }
         .stButton button:hover {
-            background-color: transparent;
-            border: 2px solid #1a73e8;
+            background-color: #45a049;
         }
         .motto {
             font-size: 2rem;  /* Menší velikost pro motto */
