@@ -14,13 +14,13 @@ st.markdown("""
         h1 {
             font-family: 'Montserrat', sans-serif;
             font-weight: 700;
-            font-size: 5rem;
+            font-size: 4.5rem;
             background: linear-gradient(90deg, rgba(241, 53, 80, 1) 0%, rgba(34, 193, 195, 1) 100%);
             -webkit-background-clip: text;
             color: transparent;
-            text-align: center;
+            text-align: left;
             margin-top: 20px;
-            margin-bottom: 0;
+            margin-left: 20px;
         }
         h2 {
             font-size: 2.5rem;
