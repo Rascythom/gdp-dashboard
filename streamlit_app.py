@@ -14,7 +14,7 @@ st.markdown("""
         h1 {
             font-family: 'Montserrat', sans-serif;
             font-weight: 700;
-            font-size: 4.5rem;
+            font-size: 7rem;  /* Zvýšená velikost */
             background: linear-gradient(90deg, rgba(241, 53, 80, 1) 0%, rgba(34, 193, 195, 1) 100%);
             -webkit-background-clip: text;
             color: transparent;
@@ -27,16 +27,30 @@ st.markdown("""
             text-align: center;
             margin-bottom: 30px;
         }
+        h3 {
+            font-size: 1.5rem;
+            text-align: center;
+            margin-bottom: 20px;
+        }
         .stButton button {
-            background-color: #1a73e8;
+            background-color: transparent;  /* Bez barvy */
             color: white;
             border-radius: 5px;
             padding: 10px 20px;
             font-size: 1.2rem;
             transition: background-color 0.3s;
+            border: 2px solid white;
         }
         .stButton button:hover {
-            background-color: #0c56b2;
+            background-color: transparent;
+            border: 2px solid #1a73e8;
+        }
+        .motto {
+            font-size: 2rem;  /* Menší velikost pro motto */
+            color: #FFCC00;  /* Zářivá barva pro motto */
+            font-weight: 500;
+            text-align: center;
+            margin-bottom: 20px;
         }
     </style>
 """, unsafe_allow_html=True)
@@ -62,7 +76,7 @@ if "tikety" not in st.session_state:
 
 # Hlavní nadpis s názvem aplikace
 st.title("ANALYTIK")
-st.header("Vyhodnocujte své sázky jako profesionál.")
+st.markdown('<h3 class="motto">Vyhodnocujte své sázky jako profesionál.</h3>', unsafe_allow_html=True)
 
 # Sekce pro přidání nového tiketu
 st.header("Přidat tiket")
