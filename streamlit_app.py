@@ -15,15 +15,18 @@ st.markdown("""
 
 DATA_FILE = "tikety.json"
 
+
 def load_tikety():
     if os.path.exists(DATA_FILE):
         with open(DATA_FILE, "r") as file:
             return json.load(file)
     return []
 
+
 def save_tikety(tikety):
     with open(DATA_FILE, "w") as file:
         json.dump(tikety, file)
+
 
 if "tikety" not in st.session_state:
     st.session_state.tikety = load_tikety()
@@ -44,10 +47,12 @@ if st.button("Přidat tiket"):
 # Zobrazení všech tiketů v opačném pořadí
 if st.session_state.tikety:
     st.header("Historie tiketů")
-    
+
+
     def smazat_tiket(index):
         del st.session_state.tikety[index]
         save_tikety(st.session_state.tikety)
+
 
     for i, tiket in enumerate(reversed(st.session_state.tikety)):
         index = len(st.session_state.tikety) - 1 - i  # Přepočítání indexu
