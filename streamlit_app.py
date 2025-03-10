@@ -101,7 +101,7 @@ if st.session_state.tikety:
         save_tikety(st.session_state.tikety)
 
     # Smazání tiketu bez použití st.experimental_rerun()
-    for i, tiket in enumerate(st.session_state.tikety):
+   for i, tiket in enumerate(reversed(st.session_state.tikety)):
         if tiket['vysledek'] == "Vyhrál":
             st.markdown(
                 f'<div style="padding: 10px; background-color: #4CAF50; border-radius: 5px; color: white;">Tiket {i + 1}: {tiket["castka"]} Kč, Kurz: {tiket["kurz"]}, Výsledek: {tiket["vysledek"]}</div>',
