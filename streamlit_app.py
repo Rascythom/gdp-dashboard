@@ -40,6 +40,12 @@ if st.button("Přidat tiket"):
     save_tikety(st.session_state.tikety)
     st.success(f"Tiket přidán: {castka} Kč, Kurz: {kurz}, Výsledek: {vysledek}")
 
+celkovy_zisk = 0
+celkovy_zisk_penez = 0
+celkovy_zisk_procenta = 0
+prumerny_kurz = 0
+prumerny_uspesny_kurz = 0
+
 if st.session_state.tikety:
     df = pd.DataFrame(st.session_state.tikety)
     df["výhra"] = df.apply(lambda row: row["castka"] * row["kurz"] if row["vysledek"] == "Vyhrál" else 0, axis=1)
