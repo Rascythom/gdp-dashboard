@@ -48,7 +48,6 @@ if st.session_state.tikety:
     def smazat_tiket(index):
         del st.session_state.tikety[index]
         save_tikety(st.session_state.tikety)
-        st.experimental_rerun()
 
     for i, tiket in enumerate(reversed(st.session_state.tikety)):
         index = len(st.session_state.tikety) - 1 - i  # Přepočítání indexu
@@ -61,5 +60,6 @@ if st.session_state.tikety:
                 f'<div style="padding: 10px; background-color: #FF5252; border-radius: 5px; color: white;">Tiket {index + 1}: {tiket["castka"]} Kč, Kurz: {tiket["kurz"]}, Výsledek: {tiket["vysledek"]}</div>',
                 unsafe_allow_html=True)
 
-        if st.button(f"Smazat {i + 1}", key=f"smazat_{i}"):
-            smazat_tiket(i)
+        if st.button(f"Smazat {index + 1}", key=f"smazat_{index}"):
+            smazat_tiket(index)
+            save_tikety(st.session_state.tikety)
