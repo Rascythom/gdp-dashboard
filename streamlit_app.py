@@ -46,8 +46,9 @@ if st.session_state.tikety:
     st.header("Historie tiketů")
     
     def smazat_tiket(index):
-        del st.session_state.tikety[index]
-        save_tikety(st.session_state.tikety)
+    del st.session_state.tikety[index]
+    save_tikety(st.session_state.tikety)
+    st.experimental_rerun()
 
     for i, tiket in enumerate(reversed(st.session_state.tikety)):
         index = len(st.session_state.tikety) - 1 - i  # Přepočítání indexu
