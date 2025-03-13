@@ -10,13 +10,35 @@ st.set_page_config(
 
 st.markdown("""
     <style>
-        body {
+        /* Gradient pozadí */
+        .stApp {
             background: linear-gradient(180deg, hsl(241, 100%, 10%) 0%, hsl(75, 93%, 74%) 100%);
             color: white;
             font-family: Arial, sans-serif;
         }
+
+        /* Hlavní nadpis */
+        .title {
+            text-align: center;
+            font-size: 50px;
+            color: #ffcc00;
+            text-shadow: 3px 3px 10px rgba(255, 204, 0, 0.8);
+            font-weight: bold;
+        }
+
+        /* Podnadpis (slogan) */
+        .subtitle {
+            text-align: center;
+            font-size: 20px;
+            color: white;
+            font-style: italic;
+        }
     </style>
 """, unsafe_allow_html=True)
+
+# Nadpis a slogan
+st.markdown("<h1 class='title'>Betmastery</h1>", unsafe_allow_html=True)
+st.markdown("<h3 class='subtitle'>Sázková statistika</h3>", unsafe_allow_html=True)
 
 DATA_FILE = "tikety.json"
 
