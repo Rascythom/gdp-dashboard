@@ -3,6 +3,8 @@ import pandas as pd
 import json
 import os
 
+st.set_page_config(page_title="betmastery.cz")
+
 st.markdown("""
     <style>
         body {
