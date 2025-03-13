@@ -12,7 +12,7 @@ st.markdown("""
     <style>
         /* Gradient od krajů do středu */
         .stApp {
-            background: radial-gradient(circle, hsl(75, 93%, 74%) 20%, hsl(241, 100%, 10%) 80%);
+            background: radial-gradient(circle, hsl(75, 93%, 74%) 80%, hsl(241, 100%, 10%) 20%);
             color: white;
             font-family: Arial, sans-serif;
         }
