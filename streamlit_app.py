@@ -72,8 +72,6 @@ if st.session_state.tikety:
             save_tikety(st.session_state.tikety)
             st.experimental_rerun()
 
-# Nastavení portu pro Railway
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 80))  # Railway automaticky nastaví PORT
+    port = int(os.environ.get("PORT", 8501))  # Railway nastaví PORT, ale 8501 je default pro Streamlit
     st.write(f"Aplikace běží na portu {port}")
-    st.server.start(port=port)
