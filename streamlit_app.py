@@ -3,7 +3,7 @@ import pandas as pd
 import json
 import os
 
-st.set_page_config(page_title="betmastery", page_icon="🎯", layout="wide", initial_sidebar_state="collapsed", menu_items=None)
+st.set_page_config(page_title="betmastery")
 
 st.markdown("""
     <style>
