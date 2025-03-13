@@ -10,28 +10,11 @@ st.set_page_config(
 
 st.markdown("""
     <style>
-        /* Gradient pozadí */
+        /* Gradient od krajů do středu */
         .stApp {
-            background: linear-gradient(180deg, hsl(241, 100%, 10%) 0%, hsl(75, 93%, 74%) 100%);
+            background: radial-gradient(circle, hsl(75, 93%, 74%) 20%, hsl(241, 100%, 10%) 80%);
             color: white;
             font-family: Arial, sans-serif;
-        }
-
-        /* Hlavní nadpis */
-        .title {
-            text-align: center;
-            font-size: 50px;
-            color: #ffcc00;
-            text-shadow: 3px 3px 10px rgba(255, 204, 0, 0.8);
-            font-weight: bold;
-        }
-
-        /* Podnadpis (slogan) */
-        .subtitle {
-            text-align: center;
-            font-size: 20px;
-            color: white;
-            font-style: italic;
         }
     </style>
 """, unsafe_allow_html=True)
