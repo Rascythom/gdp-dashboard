@@ -2,22 +2,6 @@ import streamlit as st
 import pandas as pd
 import json
 import os
-import pyrebase
-
-# Firebase konfigurace
-firebase_config = {
-    "apiKey": "AIzaSyAE0isG9T7Jn4zzauLmWNdRf2Acxr-cUrE",
-    "authDomain": "betmastery-e028e.firebaseapp.com",
-    "projectId": "betmastery-e028e",
-    "storageBucket": "betmastery-e028e.firebasestorage.app",
-    "messagingSenderId": "399566379009",
-    "appId": "1:399566379009:web:d095f7d903ac5232fb8800",
-    "measurementId": "G-PGNMJ4KGS7"
-}
-
-# Inicializace Firebase
-firebase = pyrebase.initialize_app(firebase_config)
-auth = firebase.auth()
 
 st.set_page_config(page_title="betmastery")
 
@@ -31,38 +15,6 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# Přihlašovací formulář
-st.sidebar.title("Přihlášení")
-email = st.sidebar.text_input("Email")
-password = st.sidebar.text_input("Heslo", type="password")
-
-if st.sidebar.button("Přihlásit se"):
-    try:
-        # Přihlášení uživatele
-        user = auth.sign_in_with_email_and_password(email, password)
-        st.session_state["user"] = user
-        st.sidebar.success("Přihlášení úspěšné!")
-    except Exception as e:
-        st.sidebar.error("Chyba při přihlašování!")
-
-if st.sidebar.button("Odhlásit se"):
-    st.session_state.pop("user", None)
-    st.sidebar.success("Odhlášení úspěšné!")
-
-# Registrování nových uživatelů
-st.sidebar.subheader("Registrace")
-new_email = st.sidebar.text_input("Nový email")
-new_password = st.sidebar.text_input("Nové heslo", type="password")
-
-if st.sidebar.button("Registrovat"):
-    try:
-        # Registrace nového uživatele
-        auth.create_user_with_email_and_password(new_email, new_password)
-        st.sidebar.success("Registrace úspěšná! Přihlaste se.")
-    except Exception as e:
-        st.sidebar.error("Chyba při registraci!")
-
-# Soubor pro uložení tiketů
 DATA_FILE = "tikety.json"
 
 def load_tikety():
@@ -78,23 +30,51 @@ def save_tikety(tikety):
 if "tikety" not in st.session_state:
     st.session_state.tikety = load_tikety()
 
-st.title("Sázková statistika")
+# Přidání formulářů pro registraci a přihlášení
+def registrace():
+    st.subheader("Registrace")
+    jmeno = st.text_input("Uživatelské jméno")
+    heslo = st.text_input("Heslo", type="password")
+    if st.button("Registrovat"):
+        if jmeno and heslo:
+            st.session_state.username = jmeno
+            st.session_state.password = heslo
+            st.success(f"Úspěšně jsi zaregistrován jako {jmeno}")
+        else:
+            st.error("Vyplň všechny údaje!")
 
-if "user" in st.session_state:
-    # Hlavní aplikace pro přihlášené uživatele
+def prihlaseni():
+    st.subheader("Přihlášení")
+    jmeno = st.text_input("Uživatelské jméno", key="login_username")
+    heslo = st.text_input("Heslo", type="password", key="login_password")
+    if st.button("Přihlásit se"):
+        if jmeno == st.session_state.get("username") and heslo == st.session_state.get("password"):
+            st.session_state.logged_in = True
+            st.success(f"Úspěšně přihlášen jako {jmeno}")
+        else:
+            st.error("Chybné uživatelské jméno nebo heslo.")
+
+if "logged_in" not in st.session_state:
+    st.session_state.logged_in = False
+
+if st.session_state.logged_in:
+    st.title("Sázková statistika")
+    # Tady pokračuje tvůj původní kód s formuláři pro přidání tiketu, výpočty a statistiky
+    # Vložil jsem to sem pro přehlednost, abys věděl, kde to máš použít
     st.header("Přidat tiket")
-    castka = st.number_input("Vložená částka", min_value=0.0, step=0.1)
-    kurz = st.number_input("Kurz", min_value=1.0, step=0.01)
-    vysledek = st.radio("Výsledek", ["Vyhrál", "Prohrál"], horizontal=True)
-    
+    castka = st.number_input("Vložená částka", min_value=0.0, step=0.1, key="castka_input")
+    kurz = st.number_input("Kurz", min_value=1.0, step=0.01, key="kurz_input")
+    vysledek = st.radio("Výsledek", ["Vyhrál", "Prohrál"], horizontal=True, key="vysledek_input")
+
     if st.button("Přidat tiket"):
         st.session_state.tikety.append({"castka": castka, "kurz": kurz, "vysledek": vysledek})
         save_tikety(st.session_state.tikety)
         st.success(f"Tiket přidán: {castka} Kč, Kurz: {kurz}, Výsledek: {vysledek}")
-    
-    if st.session_state.tikety:
-        st.header("Historie tiketů")
-        df = pd.DataFrame(st.session_state.tikety)
-        st.dataframe(df)
+
+    # Výpočty statistik a zbytek tvého kódu...
 else:
-    st.warning("Přihlašte se pro přístup k aplikaci.")
+    option = st.radio("Vyber možnost", ["Registrace", "Přihlášení"])
+    if option == "Registrace":
+        registrace()
+    elif option == "Přihlášení":
+        prihlaseni()
