@@ -2,6 +2,9 @@ import streamlit as st
 import pandas as pd
 import json
 import os
+import firebase_admin
+from firebase_admin import credentials, auth
+import pyrebase
 
 st.set_page_config(page_title="betmastery")
 
@@ -14,6 +17,49 @@ st.markdown("""
         }
     </style>
 """, unsafe_allow_html=True)
+
+# Firebase konfigurace
+firebase_config = {
+    "apiKey": "YOUR_API_KEY",
+    "authDomain": "YOUR_PROJECT_ID.firebaseapp.com",
+    "databaseURL": "https://YOUR_PROJECT_ID.firebaseio.com",
+    "projectId": "YOUR_PROJECT_ID",
+    "storageBucket": "YOUR_PROJECT_ID.appspot.com",
+    "messagingSenderId": "YOUR_MESSAGING_SENDER_ID",
+    "appId": "YOUR_APP_ID"
+}
+
+firebase = pyrebase.initialize_app(firebase_config)
+auth_fb = firebase.auth()
+
+# Přihlašovací formulář
+st.sidebar.title("Přihlášení")
+email = st.sidebar.text_input("Email")
+password = st.sidebar.text_input("Heslo", type="password")
+
+if st.sidebar.button("Přihlásit se"):
+    try:
+        user = auth_fb.sign_in_with_email_and_password(email, password)
+        st.session_state["user"] = user
+        st.sidebar.success("Přihlášení úspěšné!")
+    except Exception as e:
+        st.sidebar.error("Chyba při přihlašování!")
+
+if st.sidebar.button("Odhlásit se"):
+    st.session_state.pop("user", None)
+    st.sidebar.success("Odhlášení úspěšné!")
+
+# Registrování nových uživatelů
+st.sidebar.subheader("Registrace")
+new_email = st.sidebar.text_input("Nový email")
+new_password = st.sidebar.text_input("Nové heslo", type="password")
+
+if st.sidebar.button("Registrovat"):
+    try:
+        auth_fb.create_user_with_email_and_password(new_email, new_password)
+        st.sidebar.success("Registrace úspěšná! Přihlaste se.")
+    except Exception as e:
+        st.sidebar.error("Chyba při registraci!")
 
 DATA_FILE = "tikety.json"
 
@@ -32,87 +78,21 @@ if "tikety" not in st.session_state:
 
 st.title("Sázková statistika")
 
-# Vstupní formulář
-st.header("Přidat tiket")
-castka = st.number_input("Vložená částka", min_value=0.0, step=0.1, key="castka_input")
-kurz = st.number_input("Kurz", min_value=1.0, step=0.01, key="kurz_input")
-vysledek = st.radio("Výsledek", ["Vyhrál", "Prohrál"], horizontal=True, key="vysledek_input")
-
-if st.button("Přidat tiket"):
-    st.session_state.tikety.append({"castka": castka, "kurz": kurz, "vysledek": vysledek})
-    save_tikety(st.session_state.tikety)
-    st.success(f"Tiket přidán: {castka} Kč, Kurz: {kurz}, Výsledek: {vysledek}")
-
-# Výpočty statistik
-celkovy_zisk = 0
-celkovy_zisk_penez = 0
-celkovy_zisk_procenta = 0
-prumerny_kurz = 0
-prumerny_uspesny_kurz = 0
-
-if st.session_state.tikety:
-    df = pd.DataFrame(st.session_state.tikety)
-    df["výhra"] = df.apply(lambda row: row["castka"] * row["kurz"] if row["vysledek"] == "Vyhrál" else 0, axis=1)
-
-    celkovy_zisk = df["výhra"].sum() - df["castka"].sum()
-    celkovy_zisk_penez = celkovy_zisk
-    celkova_vlozena_castka = df["castka"].sum()
-    celkovy_zisk_procenta = (celkovy_zisk / celkova_vlozena_castka * 100) if celkova_vlozena_castka > 0 else 0
-    prumerny_kurz = df["kurz"].mean()
-    uspesne_kurzy = df[df["výhra"] > 0]["kurz"]
-    prumerny_uspesny_kurz = uspesne_kurzy.mean() if not uspesne_kurzy.empty else 0
-
-# Výpočet úspěšnosti podle typu kurzu
-def analyza_uspesnosti_kurzu(df):
-    nizke_kurzy = df[df["kurz"] <= 2.0]
-    stredni_kurzy = df[(df["kurz"] > 2.0) & (df["kurz"] <= 3.0)]
-    vysoke_kurzy = df[df["kurz"] > 3.0]
-
-    uspesnost_nizke = (nizke_kurzy["výhra"].sum() / nizke_kurzy["castka"].sum() * 100) if nizke_kurzy["castka"].sum() > 0 else 0
-    uspesnost_stredni = (stredni_kurzy["výhra"].sum() / stredni_kurzy["castka"].sum() * 100) if stredni_kurzy["castka"].sum() > 0 else 0
-    uspesnost_vysoke = (vysoke_kurzy["výhra"].sum() / vysoke_kurzy["castka"].sum() * 100) if vysoke_kurzy["castka"].sum() > 0 else 0
-
-    return uspesnost_nizke, uspesnost_stredni, uspesnost_vysoke
-
-uspesnost_nizke, uspesnost_stredni, uspesnost_vysoke = analyza_uspesnosti_kurzu(df) if st.session_state.tikety else (0, 0, 0)
-
-# Výstup statistik
-st.header("Celkový výsledek")
-st.markdown(
-    f'<div style="padding: 10px; background-color: {"#4CAF50" if celkovy_zisk_procenta >= 0 else "#FF5252"}; border-radius: 5px; color: white;">Celkový zisk: {celkovy_zisk_procenta:.2f}%</div>',
-    unsafe_allow_html=True)
-st.markdown(
-    f'<div style="padding: 10px; background-color: {"#4CAF50" if celkovy_zisk_penez >= 0 else "#FF5252"}; border-radius: 5px; color: white;">Celkový zisk v penězích: {celkovy_zisk_penez:.2f} Kč</div>',
-    unsafe_allow_html=True)
-
-st.markdown(f"Průměrný kurz: {prumerny_kurz:.2f}")
-st.markdown(f"Průměrný úspěšný kurz: {prumerny_uspesny_kurz:.2f}")
-
-# Zobrazení úspěšnosti podle kurzu
-st.subheader("Úspěšnost podle typu kurzu")
-st.markdown(f"Úspěšnost při nízkých kurzech (do 2.0): {uspesnost_nizke:.2f}%")
-st.markdown(f"Úspěšnost při středních kurzech (2.0–3.0): {uspesnost_stredni:.2f}%")
-st.markdown(f"Úspěšnost při vysokých kurzech (nad 3.0): {uspesnost_vysoke:.2f}%")
-
-# Zobrazení všech tiketů
-if st.session_state.tikety:
-    st.header("Historie tiketů")
-
-    def smazat_tiket(index):
-        del st.session_state.tikety[index]
+if "user" in st.session_state:
+    # Hlavní aplikace pro přihlášené uživatele
+    st.header("Přidat tiket")
+    castka = st.number_input("Vložená částka", min_value=0.0, step=0.1)
+    kurz = st.number_input("Kurz", min_value=1.0, step=0.01)
+    vysledek = st.radio("Výsledek", ["Vyhrál", "Prohrál"], horizontal=True)
+    
+    if st.button("Přidat tiket"):
+        st.session_state.tikety.append({"castka": castka, "kurz": kurz, "vysledek": vysledek})
         save_tikety(st.session_state.tikety)
-
-    # Smazání tiketu bez použití st.experimental_rerun()
-    for i, tiket in enumerate(st.session_state.tikety):
-        if tiket['vysledek'] == "Vyhrál":
-            st.markdown(
-                f'<div style="padding: 10px; background-color: #4CAF50; border-radius: 5px; color: white;">Tiket {i + 1}: {tiket["castka"]} Kč, Kurz: {tiket["kurz"]}, Výsledek: {tiket["vysledek"]}</div>',
-                unsafe_allow_html=True)
-        else:
-            st.markdown(
-                f'<div style="padding: 10px; background-color: #FF5252; border-radius: 5px; color: white;">Tiket {i + 1}: {tiket["castka"]} Kč, Kurz: {tiket["kurz"]}, Výsledek: {tiket["vysledek"]}</div>',
-                unsafe_allow_html=True)
-
-        if st.button(f"Smazat {i + 1}", key=f"smazat_{i}"):
-            smazat_tiket(i)
-            save_tikety(st.session_state.tikety)
+        st.success(f"Tiket přidán: {castka} Kč, Kurz: {kurz}, Výsledek: {vysledek}")
+    
+    if st.session_state.tikety:
+        st.header("Historie tiketů")
+        df = pd.DataFrame(st.session_state.tikety)
+        st.dataframe(df)
+else:
+    st.warning("Přihlašte se pro přístup k aplikaci.")
