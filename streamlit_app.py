@@ -2,10 +2,9 @@ import streamlit as st
 import pandas as pd
 import json
 import os
-import firebase_admin
-from firebase_admin import credentials, auth
 import pyrebase
 
+# Firebase konfigurace
 firebase_config = {
     "apiKey": "AIzaSyAE0isG9T7Jn4zzauLmWNdRf2Acxr-cUrE",
     "authDomain": "betmastery-e028e.firebaseapp.com",
@@ -16,6 +15,7 @@ firebase_config = {
     "measurementId": "G-PGNMJ4KGS7"
 }
 
+# Inicializace Firebase
 firebase = pyrebase.initialize_app(firebase_config)
 auth = firebase.auth()
 
@@ -31,20 +31,6 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# Firebase konfigurace
-firebase_config = {
-    "apiKey": "YOUR_API_KEY",
-    "authDomain": "YOUR_PROJECT_ID.firebaseapp.com",
-    "databaseURL": "https://YOUR_PROJECT_ID.firebaseio.com",
-    "projectId": "YOUR_PROJECT_ID",
-    "storageBucket": "YOUR_PROJECT_ID.appspot.com",
-    "messagingSenderId": "YOUR_MESSAGING_SENDER_ID",
-    "appId": "YOUR_APP_ID"
-}
-
-firebase = pyrebase.initialize_app(firebase_config)
-auth_fb = firebase.auth()
-
 # Přihlašovací formulář
 st.sidebar.title("Přihlášení")
 email = st.sidebar.text_input("Email")
@@ -52,7 +38,8 @@ password = st.sidebar.text_input("Heslo", type="password")
 
 if st.sidebar.button("Přihlásit se"):
     try:
-        user = auth_fb.sign_in_with_email_and_password(email, password)
+        # Přihlášení uživatele
+        user = auth.sign_in_with_email_and_password(email, password)
         st.session_state["user"] = user
         st.sidebar.success("Přihlášení úspěšné!")
     except Exception as e:
@@ -69,11 +56,13 @@ new_password = st.sidebar.text_input("Nové heslo", type="password")
 
 if st.sidebar.button("Registrovat"):
     try:
-        auth_fb.create_user_with_email_and_password(new_email, new_password)
+        # Registrace nového uživatele
+        auth.create_user_with_email_and_password(new_email, new_password)
         st.sidebar.success("Registrace úspěšná! Přihlaste se.")
     except Exception as e:
         st.sidebar.error("Chyba při registraci!")
 
+# Soubor pro uložení tiketů
 DATA_FILE = "tikety.json"
 
 def load_tikety():
