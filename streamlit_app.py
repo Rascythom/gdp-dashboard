@@ -6,6 +6,19 @@ import firebase_admin
 from firebase_admin import credentials, auth
 import pyrebase
 
+firebase_config = {
+    "apiKey": "AIzaSyAE0isG9T7Jn4zzauLmWNdRf2Acxr-cUrE",
+    "authDomain": "betmastery-e028e.firebaseapp.com",
+    "projectId": "betmastery-e028e",
+    "storageBucket": "betmastery-e028e.firebasestorage.app",
+    "messagingSenderId": "399566379009",
+    "appId": "1:399566379009:web:d095f7d903ac5232fb8800",
+    "measurementId": "G-PGNMJ4KGS7"
+}
+
+firebase = pyrebase.initialize_app(firebase_config)
+auth = firebase.auth()
+
 st.set_page_config(page_title="betmastery")
 
 st.markdown("""
