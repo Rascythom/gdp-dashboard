@@ -3,18 +3,29 @@ import pandas as pd
 import json
 import os
 
-# Nastavení stránky
 st.set_page_config(page_title="betmastery")
 
-st.markdown("""<style>
-    body {
-        background: linear-gradient(180deg, hsl(241, 100%, 10%) 0%, hsl(75, 93%, 74%) 100%);
-        color: white;
-        font-family: Arial, sans-serif;
-    }
-</style>""", unsafe_allow_html=True)
+st.markdown("""
+    <style>
+        body {
+            background: linear-gradient(180deg, hsl(241, 100%, 10%) 0%, hsl(75, 93%, 74%) 100%);
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+        .form-container {
+            width: 350px;
+            padding: 20px;
+            background-color: rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+        }
+        .button-container {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+        }
+    </style>
+""", unsafe_allow_html=True)
 
-# Soubory a data
 DATA_FILE = "tikety.json"
 
 def load_tikety():
@@ -27,49 +38,46 @@ def save_tikety(tikety):
     with open(DATA_FILE, "w") as file:
         json.dump(tikety, file)
 
-# Inicializace session_state pro tikety
 if "tikety" not in st.session_state:
     st.session_state.tikety = load_tikety()
 
-# Nastavení přihlášení a registrace
-if "user" not in st.session_state:
-    st.session_state.user = None
-
-def login_user(username, password):
-    # Tady by měla být logika pro ověření uživatele (připojení k databázi nebo kontrola souboru)
-    st.session_state.user = {"username": username}
-
-def register_user(username, password):
-    # Uložení nového uživatele (tato logika je velmi zjednodušená)
-    st.session_state.user = {"username": username}
-
-# Rozbalovací menu
-menu_option = st.sidebar.selectbox("Přihlásit se / Registrovat", ["Přihlásit se", "Registrovat"])
-
-if menu_option == "Přihlásit se":
-    st.sidebar.header("Přihlášení")
-    username = st.sidebar.text_input("Uživatelské jméno")
-    password = st.sidebar.text_input("Heslo", type="password")
-    if st.sidebar.button("Přihlásit se"):
-        login_user(username, password)
-        st.sidebar.success(f"Úspěšně přihlášeno jako {username}")
-
-elif menu_option == "Registrovat":
-    st.sidebar.header("Registrace")
-    username = st.sidebar.text_input("Uživatelské jméno")
-    password = st.sidebar.text_input("Heslo", type="password")
-    if st.sidebar.button("Registrovat"):
-        register_user(username, password)
-        st.sidebar.success(f"Úspěšná registrace {username}")
-
-# Kontrola, zda je uživatel přihlášen
-if st.session_state.user:
-    st.header(f"Vítejte, {st.session_state.user['username']}!")
-
-    # Hlavní obsah
+# Funkce pro zobrazení přihlášení a registrace
+def show_login_register_form():
     st.title("Sázková statistika")
-
-    # Vstupní formulář pro přidání tiketu
+    option = st.selectbox("Vyberte možnost", ["Přihlášení", "Registrace", "Obnovit heslo"])
+    
+    if option == "Přihlášení":
+        email = st.text_input("Email")
+        password = st.text_input("Heslo", type="password")
+        if st.button("Přihlásit"):
+            st.session_state.logged_in = True
+            st.session_state.user_email = email
+            st.session_state.user_password = password
+            st.success("Úspěšně přihlášeno!")
+            
+    elif option == "Registrace":
+        email = st.text_input("Email")
+        password = st.text_input("Heslo", type="password")
+        confirm_password = st.text_input("Potvrďte heslo", type="password")
+        if st.button("Registrovat"):
+            if password == confirm_password:
+                st.session_state.logged_in = True
+                st.session_state.user_email = email
+                st.session_state.user_password = password
+                st.success("Úspěšná registrace!")
+            else:
+                st.error("Hesla se neshodují")
+    
+    elif option == "Obnovit heslo":
+        email = st.text_input("Zadejte svůj email")
+        if st.button("Obnovit heslo"):
+            st.success("Odkaz pro obnovu hesla byl odeslán na váš email!")
+            
+# Pokud je uživatel přihlášen, zobrazí se hlavní stránka s přehledem tiketů
+if "logged_in" in st.session_state and st.session_state.logged_in:
+    st.title("Sázková statistika")
+    
+    # Formulář pro přidání tiketu
     st.header("Přidat tiket")
     castka = st.number_input("Vložená částka", min_value=0.0, step=0.1, key="castka_input")
     kurz = st.number_input("Kurz", min_value=1.0, step=0.01, key="kurz_input")
@@ -99,8 +107,18 @@ if st.session_state.user:
         uspesne_kurzy = df[df["výhra"] > 0]["kurz"]
         prumerny_uspesny_kurz = uspesne_kurzy.mean() if not uspesne_kurzy.empty else 0
 
-    # Zobrazení statistik
+    # Výstup statistik
     st.header("Celkový výsledek")
-    st.markdown(f'Celkový zisk: {celkovy_zisk_procenta:.2f}%')
+    st.markdown(
+        f'<div style="padding: 10px; background-color: {"#4CAF50" if celkovy_zisk_procenta >= 0 else "#FF5252"}; border-radius: 5px; color: white;">Celkový zisk: {celkovy_zisk_procenta:.2f}%</div>',
+        unsafe_allow_html=True)
+    st.markdown(
+        f'<div style="padding: 10px; background-color: {"#4CAF50" if celkovy_zisk_penez >= 0 else "#FF5252"}; border-radius: 5px; color: white;">Celkový zisk v penězích: {celkovy_zisk_penez:.2f} Kč</div>',
+        unsafe_allow_html=True)
+
     st.markdown(f"Průměrný kurz: {prumerny_kurz:.2f}")
     st.markdown(f"Průměrný úspěšný kurz: {prumerny_uspesny_kurz:.2f}")
+
+# Pokud není uživatel přihlášen, zobrazí se formulář pro přihlášení, registraci nebo obnovu hesla
+else:
+    show_login_register_form()
