@@ -32,22 +32,16 @@ if "tikety" not in st.session_state:
 
 st.title("Sázková statistika")
 
-# Tlačítko pro zobrazení/skrytí formuláře
-if st.button("Přidat tiket"):
-    st.session_state.show_form = not st.session_state.get('show_form', False)
+# Vstupní formulář
+st.header("Přidat tiket")
+castka = st.number_input("Vložená částka", min_value=0.0, step=0.1, key="castka_input")
+kurz = st.number_input("Kurz", min_value=1.0, step=0.01, key="kurz_input")
+vysledek = st.radio("Výsledek", ["Vyhrál", "Prohrál"], horizontal=True, key="vysledek_input")
 
-# Formulář
-if st.session_state.get('show_form', False):
-    with st.form(key='ticket_form'):
-        castka = st.number_input("Vložená částka", min_value=0.0, step=0.1, key="castka_input")
-        kurz = st.number_input("Kurz", min_value=1.0, step=0.01, key="kurz_input")
-        vysledek = st.radio("Výsledek", ["Vyhrál", "Prohrál"], horizontal=True, key="vysledek_input")
-        submit_button = st.form_submit_button(label="Přidat tiket")
-        
-        if submit_button:
-            st.session_state.tikety.append({"castka": castka, "kurz": kurz, "vysledek": vysledek})
-            save_tikety(st.session_state.tikety)
-            st.success(f"Tiket přidán: {castka} Kč, Kurz: {kurz}, Výsledek: {vysledek}")
+if st.button("Přidat tiket"):
+    st.session_state.tikety.append({"castka": castka, "kurz": kurz, "vysledek": vysledek})
+    save_tikety(st.session_state.tikety)
+    st.success(f"Tiket přidán: {castka} Kč, Kurz: {kurz}, Výsledek: {vysledek}")
 
 # Výpočty statistik
 celkovy_zisk = 0
