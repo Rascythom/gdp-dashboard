@@ -12,12 +12,6 @@ st.markdown("""
             color: white;
             font-family: Arial, sans-serif;
         }
-        .form-container {
-            display: none;
-        }
-        .form-container.open {
-            display: block;
-        }
     </style>
 """, unsafe_allow_html=True)
 
