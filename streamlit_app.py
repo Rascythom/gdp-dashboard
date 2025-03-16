@@ -30,8 +30,7 @@ def save_tikety(tikety):
 if "tikety" not in st.session_state:
     st.session_state.tikety = load_tikety()
 
-st.image(r"C:\Users\Lenovo\Desktop\Project sázkařský gate\Logo12a.png", use_column_width=True)
-st.markdown('<p style="font-size: 80%;">Sázková statistika</p>', unsafe_allow_html=True)
+st.title("Sázková statistika")
 
 # Vstupní formulář
 st.header("Přidat tiket")
