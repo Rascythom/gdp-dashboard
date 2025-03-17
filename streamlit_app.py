@@ -19,7 +19,7 @@ st.markdown("""
             max-width: 210px; /* Maximální šířka */
             display: block; /* Blokový prvek, aby fungovalo zarovnání */
             margin-left: 0; /* Zarovnání úplně vlevo */
-            margin-top: -70px; /* Posun obrázku o jednu výšku nahoru */
+            margin-top: -30px; /* Posun obrázku o jednu výšku nahoru */
         }
     </style>
 """, unsafe_allow_html=True)
