@@ -20,6 +20,7 @@ st.markdown("""
             display: block; /* Blokový prvek, aby fungovalo zarovnání */
             margin-left: 0; /* Zarovnání úplně vlevo */
             margin-top: -30px; /* Posun obrázku o jednu výšku nahoru */
+            margin-bottom: 20px; /* Přidání mezery pod obrázek (můžeš upravit hodnotu podle potřeby) */
         }
     </style>
 """, unsafe_allow_html=True)
