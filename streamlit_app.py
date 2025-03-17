@@ -12,7 +12,20 @@ st.markdown("""
             color: white;
             font-family: Arial, sans-serif;
         }
+
+        /* Styl pro obrázek */
+        .logo {
+            width: 70%; /* Zmenšení na 70 % původní velikosti */
+            max-width: 210px; /* Maximální šířka */
+            display: block; /* Blokový prvek, aby fungovalo zarovnání */
+            margin-left: 0; /* Zarovnání úplně vlevo */
+        }
     </style>
+""", unsafe_allow_html=True)
+
+# Vložení obrázku pomocí HTML, abychom mohli upravit jeho styl
+st.markdown("""
+    <img src="https://github.com/Rascythom/gdp-dashboard/blob/main/1logo.png?raw=true" class="logo">
 """, unsafe_allow_html=True)
 
 DATA_FILE = "tikety.json"
@@ -29,8 +42,6 @@ def save_tikety(tikety):
 
 if "tikety" not in st.session_state:
     st.session_state.tikety = load_tikety()
-
-st.image("https://github.com/Rascythom/gdp-dashboard/blob/main/1logo.png?raw=true")
 
 # Vstupní formulář
 st.header("Přidat tiket")
