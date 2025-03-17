@@ -15,7 +15,7 @@ st.markdown("""
 
         /* Styl pro obrázek */
         .logo {
-            width: 70%; /* Zmenšení na 70 % původní velikosti */
+            width: 80%; /* Zmenšení na 70 % původní velikosti */
             max-width: 210px; /* Maximální šířka */
             display: block; /* Blokový prvek, aby fungovalo zarovnání */
             margin-left: 0; /* Zarovnání úplně vlevo */
