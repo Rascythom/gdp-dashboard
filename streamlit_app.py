@@ -25,11 +25,11 @@ st.markdown("""
 
         /* Změna velikosti písma pro nadpis 'Přidat tiket' */
         .pridat_tiket {
-            font-size: 18px;  /* Tady nastavíme požadovanou velikost písma */
+            font-size: 10px;  /* Tady nastavíme požadovanou velikost písma */
         }
 
         .celkovy_vysledek {
-            font-size: 18px;
+            font-size: 10px;
         }
 
     </style>
