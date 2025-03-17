@@ -22,6 +22,16 @@ st.markdown("""
             margin-top: -30px; /* Posun obrázku o jednu výšku nahoru */
             margin-bottom: 35px; /* Přidání mezery pod obrázek (můžeš upravit hodnotu podle potřeby) */
         }
+
+        /* Změna velikosti písma pro nadpis 'Přidat tiket' */
+        .pridat_tiket {
+            font-size: 18px;  /* Tady nastavíme požadovanou velikost písma */
+        }
+
+        .celkovy_vysledek {
+            font-size: 18px;
+        }
+
     </style>
 """, unsafe_allow_html=True)
 
@@ -46,7 +56,7 @@ if "tikety" not in st.session_state:
     st.session_state.tikety = load_tikety()
 
 # Vstupní formulář
-st.header("Přidat tiket")
+st.markdown('<h2 class="pridat_tiket">Přidat tiket</h2>', unsafe_allow_html=True)
 castka = st.number_input("Vložená částka", min_value=0.0, step=0.1, key="castka_input")
 kurz = st.number_input("Kurz", min_value=1.0, step=0.01, key="kurz_input")
 vysledek = st.radio("Výsledek", ["Vyhrál", "Prohrál"], horizontal=True, key="vysledek_input")
@@ -90,7 +100,7 @@ def analyza_uspesnosti_kurzu(df):
 uspesnost_nizke, uspesnost_stredni, uspesnost_vysoke = analyza_uspesnosti_kurzu(df) if st.session_state.tikety else (0, 0, 0)
 
 # Výstup statistik
-st.header("Celkový výsledek")
+st.markdown('<h2 class="celkovy_vysledek">Celkový výsledek</h2>', unsafe_allow_html=True)
 st.markdown(
     f'<div style="padding: 10px; background-color: {"#4CAF50" if celkovy_zisk_procenta >= 0 else "#FF5252"}; border-radius: 5px; color: white;">Celkový zisk: {celkovy_zisk_procenta:.2f}%</div>',
     unsafe_allow_html=True)
