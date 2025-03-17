@@ -30,7 +30,7 @@ def save_tikety(tikety):
 if "tikety" not in st.session_state:
     st.session_state.tikety = load_tikety()
 
-st.title("Sázková statistika")
+st.image("https://github.com/Rascythom/gdp-dashboard/blob/main/1logo.png?raw=true")
 
 # Vstupní formulář
 st.header("Přidat tiket")
