@@ -20,7 +20,7 @@ st.markdown("""
             display: block; /* Blokový prvek, aby fungovalo zarovnání */
             margin-left: 0; /* Zarovnání úplně vlevo */
             margin-top: -30px; /* Posun obrázku o jednu výšku nahoru */
-            margin-bottom: 35px; /* Přidání mezery pod obrázek (můžeš upravit hodnotu podle potřeby) */
+            margin-bottom: 75px; /* Přidání mezery pod obrázek (můžeš upravit hodnotu podle potřeby) */
         }
 
         /* Změna velikosti písma pro nadpis 'Přidat tiket' */
